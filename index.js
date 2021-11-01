@@ -19,7 +19,97 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.get("/", (req, res) => {
     res.send("Hello World!");
 });
+client.connect((err) => {
+    const toursCollection = client
+        .db("birdily")
+        .collection("tours");
+    const bookingCollection = client.db("birdily").collection("booking");
+    console.log(`database connected`);
+    // get all tours
 
+    app.get("/allTours", async (req, res) => {
+        const result = await toursCollection.find({}).toArray();
+        res.send(result);
+    });
+
+    // get single tour
+
+    app.get("/singleTour/:id", (req, res) => {
+        console.log(req.params.id);
+        toursCollection
+            .find({ _id: ObjectId(req.params.id) })
+            .toArray((err, results) => {
+                res.send(results[0]);
+            });
+    });
+    // add tour
+
+    app.post("/addTour", async (req, res) => {
+        const result = await bookingCollection.insertOne(req.body);
+        res.send(result);
+    });
+
+    //get  my order by using email query
+
+    app.get("/myBookings/:email", async (req, res) => {
+
+        const result = await bookingCollection
+            .find({
+                userEmail: req.params.email,
+            })
+            .toArray();
+        res.send(result);
+    });
+
+    // delete booking from my booking
+
+    app.delete("/deleteBooking/:id", async (req, res) => {
+        const result = await bookingCollection.deleteOne({
+            _id: ObjectId(req.params.id),
+        });
+        res.send(result);
+    });
+    //  get all bookings
+    app.get("/allBookings", async (req, res) => {
+        const result = await bookingCollection.find({}).toArray();
+        res.send(result);
+    });
+
+    // delete booking from manage booking
+    app.delete("/Managebooking/:id", async (req, res) => {
+        const result = await bookingCollection.deleteOne({
+            _id: ObjectId(req.params.id),
+        });
+        res.send(result);
+    });
+    // add tour
+
+    app.post("/addTour", async (req, res) => {
+
+        const result = toursCollection.insertOne(req.body);
+        res.send(result);
+    });
+    // update manage booking by approved status
+    //update product
+    app.put("/update/:id", async (req, res) => {
+        const id = req.params.id;
+        const updatedStatus = req.body;
+
+        const filter = { _id: ObjectId(id) }
+
+        bookingCollection
+            .updateOne(filter, {
+                $set: {
+                    status: updatedStatus.status,
+                },
+            })
+            .then((result) => {
+                res.send(result);
+            });
+    });
+    // perform actions on the collection object
+    //   client.close();
+});
 
 app.listen(port, () => {
     console.log(`Listening to port : ${port}`);
