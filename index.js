@@ -42,9 +42,9 @@ client.connect((err) => {
                 res.send(results[0]);
             });
     });
-    // add tour
+    // add booking
 
-    app.post("/addTour", async (req, res) => {
+    app.post("/addBooking", async (req, res) => {
         const result = await bookingCollection.insertOne(req.body);
         res.send(result);
     });
@@ -90,7 +90,7 @@ client.connect((err) => {
         res.send(result);
     });
     // update manage booking by approved status
-    //update product
+    
     app.put("/update/:id", async (req, res) => {
         const id = req.params.id;
         const updatedStatus = req.body;
