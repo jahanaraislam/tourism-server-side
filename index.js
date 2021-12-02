@@ -74,7 +74,7 @@ client.connect((err) => {
         const result = await bookingCollection.find({}).toArray();
         res.send(result);
     });
-
+// change
     // delete booking from manage booking
     app.delete("/Managebooking/:id", async (req, res) => {
         const result = await bookingCollection.deleteOne({
